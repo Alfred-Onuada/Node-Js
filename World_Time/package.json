@@ -1,0 +1,25 @@
+{
+  "name": "world_time",
+  "version": "1.0.0",
+  "description": "This package provides information about the time around the world.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app"
+  },
+  "keywords": [
+    "time",
+    "app",
+    "node",
+    "js",
+    "fun",
+    "cool"
+  ],
+  "author": "Onuada Alfred",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.1",
+    "formidable": "^1.2.2",
+    "mongoose": "^5.12.10"
+  }
+}

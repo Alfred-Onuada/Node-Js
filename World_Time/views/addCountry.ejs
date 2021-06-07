@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Time API - Best of The Best</title>
+
+    <!-- Css links -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/material_fonts.css">
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="stylesheet" href="css/materialize.min.css">
+
+    <!-- JQuery CDN -->
+    <script src="js/jquery.js"></script>
+    
+</head>
+<body>
+
+
+    <div class="addCountryContainer">
+        <div class="row">
+            <div class="col m5 col s4">
+
+                <div class="loader hide leftSpinner">
+                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+
+                <div class="imgHolder">
+                    <img class="iHimg" id="iHimg" src="defaults/add_photo.png" alt="An image of the country's flag">
+                </div>
+            </div>
+            <div class="col m7 col s8">
+
+                <h4 class="heading">Country's Data</h4>
+
+                <div class="loader hide rightSpinner">
+                    <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+                </div>
+
+                <!-- returning the function is not important but jsut incase i ever needed to do something with it. -->
+                <form id="countryForm" method="post">
+
+                    <div class="input-field cNameDiv">
+                        <input onkeyup="findCountry()" id="cName" class="acfi autocomplete" type="text" name="Name" autocomplete="null">
+                        <label for="cName" class="acfil">Enter Country's Name</label>
+                    </div>
+
+                    <div class="cData">
+
+                        <div class="input-field cDataContent cDCL cCapital">
+                            <input id="cCapital" class="acfis" type="text" name="Capital" readonly>
+                            <label id="cCL" for="cCapital" class="acfils">Capital State</label>
+                        </div>
+
+                        <div class="input-field cDataContent cDCR cReqAddress">
+                            <input id="cReqAddress" class="acfis" type="text" name="ReqAddress" readonly>
+                            <label id="cRAL" for="cReqAddress" class="acfils">API Address</label>
+                        </div>
+
+                        <div class="input-field cDataContent cDCL cLocalTime">
+                            <input id="cLocalTime" class="acfis" type="text" name="LocalTime" readonly>
+                            <label id="cLTL" for="cLocalTime" class="acfils">Local Time</label>
+                        </div>
+
+                        <div class="input-field cDataContent cDCR cTimeOffset">
+                            <input id="cTimeOffset" class="acfis" type="text" name="TimeOffset" readonly>
+                            <label id="cTOL" for="cTimeOffset" class="acfils">TimeOffset</label>
+                        </div>
+
+                        <input type="text" name="Flag" id="cFlag" class="hide" readonly>
+
+                    </div>
+
+                    <button id="cBtn" class="btn waves-effect waves-light" type="submit" disabled>Add Country</button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- JS links -->
+    <script src="js/materialize.js"></script>
+    <script src="js/materialize.min.js"></script>
+    <script src="js/script.js"></script>
+    
+</body>
+</html>

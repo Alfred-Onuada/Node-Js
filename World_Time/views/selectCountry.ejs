@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World Time API - Best of The Best</title>
+
+    <!-- Css links -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/material_fonts.css">
+    <link rel="stylesheet" href="css/materialize.css">
+    <link rel="stylesheet" href="css/materialize.min.css">
+
+    <!-- A function is called so I need to define the Js file first -->
+    <script src="js/script.js"></script>
+    
+</head>
+<body onload="search()">
+
+    
+    <div class="wrapper">
+        <div class="top">
+            <div class="nav-wrapper">
+                <form id="myForm">
+                    <div class="input-field">
+                        <input onkeyup="searchLogic()" class="search_box" id="search" type="search" placeholder="Click me to find a country" required>
+                        <label class="label-icon" for="search"><i id="sicon" class="sicon material-icons">search</i></label>
+                        <i id="clearIcon" class="sicon2 material-icons">close</i>
+                    </div>
+                </form>
+              </div>
+        </div>
+        <div id="countryList" class="countryList">
+
+            <!-- the data coming is an array inside an array -->
+            <script>
+                var a = 0;
+            </script>         
+            <% for( let index = 0; index < countryData.length; index++ ) { %>
+
+                <div class="eachCountry">
+                    
+                    <div class="card">
+                        <div class="card-image waves-effect waves-block waves-light">
+                            <img class="activator cImg" src="<%= countryData[index].Flag %>">
+                        </div>
+                        <div class="card-content">
+                            <span class="hide" id="cName<%= index %>"><%= countryData[index].Name %></span>
+                            <span class="country-title activator grey-text text-darken-4"><%= countryData[index].Name %><i class="material-icons right">more_vert</i></span>
+                            
+                            <%
+
+                                var timeInfo = countryData[index].LocalTime;
+                                var timeInfo = timeInfo.split(" ");
+
+                                var date = timeInfo[0];
+                                var LocalTime = timeInfo[1];
+
+                            %>
+                            
+                            <span class="country-time activator grey-text text-darken-4 lT<%= index %>" id="lT<%= index %>"><%= LocalTime %></span>
+
+                            <script>updateTime(a)</script>
+
+                        </div>
+                        <div class="card-reveal">
+                            <span class="card-title grey-text text-darken-4"><%= countryData[index].Name %> <i class="material-icons right">close</i></span>
+                            <p>Capital State: <%= countryData[index].Capital %> </p>
+                            <p id="lD<%= index %>">UTC Date: <%= date %> </p>
+                            <p>UTC TimeOffset: <%= countryData[index].TimeOffset %> </p>
+                        </div>
+                    </div>      
+                
+                </div>
+
+                <script>
+                    a += 1;
+                </script>  
+
+            <% } %>
+            
+            <div class="addBtn">
+                <a href="/add">
+                    <div class="addCircle">
+                        <span class="material-icons-round addIcon">add</span>
+                    </div>
+                </a>
+            </div>
+
+            <div class="addNew"></div>
+        </div>
+    </div>
+
+    <!-- JS links -->
+    <script src="js/materialize.js"></script>
+    <script src="js/materialize.min.js"></script>
+    
+</body>
+</html>
