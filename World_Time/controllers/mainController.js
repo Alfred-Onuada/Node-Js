@@ -2,77 +2,132 @@
 const axios = require('axios').default;
 
 // API Key
-const API_KEY = "82770e1badc44aedb989b416a090fe15";
+const API_KEY = process.env['API_KEY'];
 
 // import the db
 const Country = require("./../models/countryModel"); // the model is in an object on the module.exports called country
 
 module.exports = function(app) {
 
+    // this helps me access io in this file
+    io = require('./../app');
+
     // this conflicts with other apps that are on port 3000 but these apps are not going to be running simultaneously.
     app.get('/', (req, res) => {
 
         console.log(`request made to: ${req.url}`);
 
-        Country.find()
-            .then((countryData) => {
+        // am juust send the page but the real data will load behind the scene
+        res.render("selectCountry");
 
-                if (countryData.length == 0) {
+        io.on("connection" , function (clientSocket) {
 
-                    res.render("selectCountry", {'countryData': countryData});
+            Country.find()
+                .then((countryData) => {
 
-                }
+                    clientSocket.emit("length", countryData.length);
 
-                return countryData;
- 
-            })
-            // this countrydata is what is returned from above
-            .then((countryData) => {
-
-                async function getData() {
-
-                    for (let index = 0; index < countryData.length; index++) {
-                        const content = countryData[index];
-
-                        // this makes sure the loop pauses during each iteration as i only get 1 req per second on the api
-                        await axios.get(`https://timezone.abstractapi.com/v1/current_time/?api_key=${API_KEY}&location=${content.ReqAddress}`)
-                            .then(function (response) {
-                                // the response contains two properties the heaer and the data
-                                content.LocalTime = response.data.datetime;
-                    
-                                // this makes sure it only render when this loop is done because this code is an async code.
-                                if (index == (countryData.length - 1)) {
-                    
-                                    res.render("selectCountry", {'countryData': countryData});
-                    
-                                }
-                                
-                                return content._id;
-                            })
-                            .then((id) => {
-                                Country.findByIdAndUpdate(id, { LocalTime: content.LocalTime })
-                                    .then((docs) => {
-                                        // 
-                                    })
-                                    .catch((err) => {
-                                        if (err) throw err;
-                                    })
-                            })
-                            .catch((err) => {
-                                if (err) throw err;
-                            })
-    
+                    // so the client is not listening in vain i send an empty array if there is no data
+                    if (countryData.length == 0) {  
+                        clientSocket.emit("data", null);
                     }
 
-                }
+                    return countryData;
+    
+                })
+                // this countrydata is what is returned from above
+                .then((countryData) => {
 
-                getData();
-                
-            })
-            .catch((err) => {
-                if (err) throw err;
-            });
+                    function next(i, start, end) {
+                        i++;
+                        // this timer makes sure you dont make too many calls to the api per second
+
+                        var time = (end - start) / 1000;
+
+                        if (time < 1.2) {
+                            time = 1200;
+                        }
+
+                        setTimeout(() => {
+                            getData(i);
+                        }, time);
+                    }
+
+                    function getData(index) {
+
+                        if (index < 0) {
+                            return;
+                        }
+
+                        if (index < countryData.length) {
+
+                            var content = countryData[index];
+
+                            // start time
+                            var start = Date.now();
+                            axios.get(`https://timezone.abstractapi.com/v1/current_time/?api_key=${API_KEY}&location=${content.ReqAddress}`)
+                                .then(function (response) {
+
+                                    var end = Date.now();
+
+                                    // the response contains two properties the heaer and the data
+                                    content.LocalTime = response.data.datetime;
+                        
+                                    // this makes sure it only render when this loop is done because this code is an async code.
+                                    if (index == (countryData.length - 1)) {
+                        
+                                        clientSocket.emit("data", countryData);
+                        
+                                    }
+                                    
+                                    return [content._id, end];
+                                })
+                                .then((res) => {
+
+                                    // define the variables from what was returned
+                                    id = res[0];
+                                    end = res[1];
+
+                                    Country.findByIdAndUpdate(id, { LocalTime: content.LocalTime })
+                                        .then((docs) => {
+                                            // call recursive function
+                                            next(index, start, end);
+                                        })
+                                        .catch((err) => {
+                                            if (err) throw err;
+
+                                            // call recursive function
+                                            next(index, start, end);
+                                        })
+                                })
+                                .catch((err) => {
+
+                                    end = Date.now();
+                                    if (err) throw err;
+
+                                    // call recursive function
+                                    next(index, start, end);
+                                })
         
+                        } else {
+                            return;
+                        }
+
+                    }
+
+                    // counter for recursion loop
+                    index = 0;
+                    getData(index);
+
+
+                    
+                })
+                .catch((err) => {
+                    if (err) throw err;
+                });
+                
+            });
+            
     });
 
     app.get('/home', (res, req) => {

@@ -245,3 +245,10 @@
         transform: rotateZ(359deg);
     }
 }
+.cSpinner{
+    height: 282px;
+    width: 250px;
+    display: flex;
+    place-content: center;
+    place-items: center;
+}

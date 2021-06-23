@@ -49,7 +49,7 @@ function searchLogic() {
 
                     var cName = content.Name;
                     
-                    var date = content.LocalTime.split("")[0];
+                    var date = content.LocalTime.split(" ")[0];
                     var LocalTime = countries[cName];
 
                     cards += `
@@ -71,7 +71,6 @@ function searchLogic() {
                                     <span class="card-title grey-text text-darken-4">${content.Name } <i class="material-icons right">close</i></span>
                                     <p>Capital State: ${content.Capital } </p>
                                     <p id="lD${index }">UTC Date: ${date } </p>
-                                    <p class="lT${index }">Local Time: ${LocalTime } </p>
                                     <p>UTC TimeOffset: ${content.TimeOffset } </p>
                                 </div>
                             </div>      
@@ -79,6 +78,8 @@ function searchLogic() {
                         </div>
 
                     `;
+
+                    updateTime(index);
 
                 };
 
@@ -243,8 +244,6 @@ function findCountry() {
                     if (this.status == 200 && this.readyState == 4) {
 
                         var response = JSON.parse(this.responseText);
-
-                        console.log(response);
                         
                         localTimeLabel.classList.add('active');
                         localTime.value = response.datetime;
@@ -414,5 +413,83 @@ function updateTime(index) {
     
     }, 1000);
 
+
+}
+
+function loadData() {
+
+    const socket = io();
+
+    const elemBody = document.getElementById("countryList");
+    const preloader = document.getElementById("preloader");
+
+    socket.on("length", (msg) => {
+        var length = msg;
+
+        // i need the length first so i am taking it first then listening for the data
+        socket.on("data", (msg) => {
+
+            var cards = "";
+
+            if(msg) {  
+                var data = msg;
+
+                for (let index = 0; index < data.length; index++) {
+
+                    var content = data[index];
+                    
+                    var date = content.LocalTime.split(" ")[0];
+                    var LocalTime = content.LocalTime.split(" ")[1];
+
+                    cards += `
+
+                        <div class="eachCountry">
+                        
+                            <div class="card">
+                                <div class="card-image waves-effect waves-block waves-light">
+                                    <img class="activator cImg" src="${content.Flag}">
+                                </div>
+                                <div class="card-content">
+                                    <span class="hide" id="cName${index}">${content.Name}</span>
+                                    <span class="country-title activator grey-text text-darken-4">${content.Name }<i class="material-icons right">more_vert</i></span>
+                                    
+                                    <span class="country-time activator grey-text text-darken-4 lT${index }" id="lT${index }">${LocalTime }</span>
+
+                                </div>
+                                <div class="card-reveal">
+                                    <span class="card-title grey-text text-darken-4">${content.Name } <i class="material-icons right">close</i></span>
+                                    <p>Capital State: ${content.Capital } </p>
+                                    <p id="lD${index }">UTC Date: ${date } </p>
+                                    <p>UTC TimeOffset: ${content.TimeOffset } </p>
+                                </div>
+                            </div>      
+                        
+                        </div>
+
+                    `;
+
+                    updateTime(index);
+
+                };
+
+            }
+
+            cards += `
+                <div class="addBtn">
+                    <a href="/add">
+                        <div class="addCircle">
+                            <span class="material-icons-round addIcon">add</span>
+                        </div>
+                    </a>
+                </div>
+            `;
+
+            elemBody.innerHTML = cards;
+
+            preloader.classList.add('hide');
+
+        });
+
+    });
 
 }

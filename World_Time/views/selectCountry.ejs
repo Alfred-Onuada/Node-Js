@@ -13,11 +13,13 @@
     <link rel="stylesheet" href="css/materialize.css">
     <link rel="stylesheet" href="css/materialize.min.css">
 
+    <script src="/socket.io/socket.io.js"></script>
+
     <!-- A function is called so I need to define the Js file first -->
     <script src="js/script.js"></script>
     
 </head>
-<body onload="search()">
+<body onload="search(), loadData()">
 
     
     <div class="wrapper">
@@ -34,52 +36,9 @@
         </div>
         <div id="countryList" class="countryList">
 
-            <!-- the data coming is an array inside an array -->
-            <script>
-                var a = 0;
-            </script>         
-            <% for( let index = 0; index < countryData.length; index++ ) { %>
-
-                <div class="eachCountry">
-                    
-                    <div class="card">
-                        <div class="card-image waves-effect waves-block waves-light">
-                            <img class="activator cImg" src="<%= countryData[index].Flag %>">
-                        </div>
-                        <div class="card-content">
-                            <span class="hide" id="cName<%= index %>"><%= countryData[index].Name %></span>
-                            <span class="country-title activator grey-text text-darken-4"><%= countryData[index].Name %><i class="material-icons right">more_vert</i></span>
-                            
-                            <%
-
-                                var timeInfo = countryData[index].LocalTime;
-                                var timeInfo = timeInfo.split(" ");
-
-                                var date = timeInfo[0];
-                                var LocalTime = timeInfo[1];
-
-                            %>
-                            
-                            <span class="country-time activator grey-text text-darken-4 lT<%= index %>" id="lT<%= index %>"><%= LocalTime %></span>
-
-                            <script>updateTime(a)</script>
-
-                        </div>
-                        <div class="card-reveal">
-                            <span class="card-title grey-text text-darken-4"><%= countryData[index].Name %> <i class="material-icons right">close</i></span>
-                            <p>Capital State: <%= countryData[index].Capital %> </p>
-                            <p id="lD<%= index %>">UTC Date: <%= date %> </p>
-                            <p>UTC TimeOffset: <%= countryData[index].TimeOffset %> </p>
-                        </div>
-                    </div>      
-                
-                </div>
-
-                <script>
-                    a += 1;
-                </script>  
-
-            <% } %>
+            <div id="preloader" class="loader cSpinner">
+                <div class="lds-spinner"><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div><div></div></div>
+            </div>
             
             <div class="addBtn">
                 <a href="/add">

@@ -3,14 +3,28 @@ const app = express();
 const mongoose = require('mongoose');
 const bodyParser = require("body-parser");
 
+// Initializing server with http
+const http = require('http');
+const server = http.createServer(app);
+
+// Using socket Io for web sockets
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+// this module allows you to make use of enviroment variables
+require('dotenv').config({path: __dirname + '/.env'}); // notice you dont need to store it in a variable and you need to specify the path to it
+
+module.exports = io;
+
 const uri = "mongodb+srv://adminUser:adminPassword@todo-db.az8gh.mongodb.net/World_Time?retryWrites=true&w=majority";
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     // this request above is an asynchronous code using the then am waiting for when it finishes before I start the app
     .then((result) => {
 
-        const port = process.env.port || 3000; 
+        const port = process.env.PORT || 3000; 
         console.log("Starting app...");
-        app.listen(port);
+
+        server.listen(port);
         console.log(`App is now active on port ${port}`);
 
         console.log("Database Connection Succesful.");
