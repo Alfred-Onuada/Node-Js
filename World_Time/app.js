@@ -16,7 +16,7 @@ require('dotenv').config({path: __dirname + '/.env'}); // notice you dont need t
 
 module.exports = io;
 
-const uri = "mongodb+srv://adminUser:adminPassword@todo-db.az8gh.mongodb.net/World_Time?retryWrites=true&w=majority";
+const uri = ####;
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false })
     // this request above is an asynchronous code using the then am waiting for when it finishes before I start the app
     .then((result) => {
